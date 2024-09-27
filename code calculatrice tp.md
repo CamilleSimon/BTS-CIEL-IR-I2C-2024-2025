@@ -23,51 +23,97 @@ void setup() {
 }
 
 void saisie() {
-    if (!commande1 && !saisieNombreAffichee) { 
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.print("Saisir un nombre");
-        lcd.setCursor(0, 1);
-        lcd.print("!");
-        saisieNombreAffichee = true; 
-    }
-    
-    if (!commande1) {
-        verifnombre1();  
-    }
-    
-    if (commande1 && !commande2 ) {  
-        if (!saisieNombreAffichee) {
+   
+    bool nouvelleOperation = true;  
+
+    while (nouvelleOperation) {
+        if (!commande1 && !saisieNombreAffichee) { 
             lcd.clear();
             lcd.setCursor(0, 0);
-            lcd.print("Saisir un second");
+            lcd.print("Saisir un nombre");
             lcd.setCursor(0, 1);
-            lcd.print("nombre !");
-            saisieNombreAffichee = true;
+            lcd.print("!");
+            saisieNombreAffichee = true; 
         }
-        verifnombre2();  
-    }
-
-    if (commande1 && commande2 && !commande3) {  
-        if (!saisieNombreAffichee) {
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("Saisir une");
-            lcd.setCursor(0, 1);
-            lcd.print("operation !");
-            saisieNombreAffichee = true;
-        }
-        verifope(); 
-    }  
-
-    if (commande1 && commande2 && commande3) { 
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        delay(1000);
         
-        calcul();
+        if (!commande1) {
+            verifnombre1();  
+        }
+        
+        if (commande1 && !commande2 ) {  
+            if (!saisieNombreAffichee) {
+                lcd.clear();
+                lcd.setCursor(0, 0);
+                lcd.print("Saisir un second");
+                lcd.setCursor(0, 1);
+                lcd.print("nombre !");
+                saisieNombreAffichee = true;
+            }
+            verifnombre2();  
+        }
+
+        if (commande1 && commande2) {
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Nb1: ");
+            lcd.print(choix1);
+            lcd.setCursor(0, 1);
+            lcd.print("Nb2: ");
+            lcd.print(choix2);
+            delay(3000);
+        }
+
+        if (commande1 && commande2) {  
+            if (!saisieNombreAffichee) {
+                lcd.clear();
+                lcd.setCursor(0, 0);
+                lcd.print("Saisir une");
+                lcd.setCursor(0, 1);
+                lcd.print("operation !");
+                saisieNombreAffichee = true;
+            }
+            verifope(); 
+        }  
+
+        if (commande1 && commande2 && commande3) {
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Operation: ");
+            lcd.print(choix3);
+            delay(3000);
+            
+           
+            float resultat = calcul();
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Resultat: ");
+            lcd.print(resultat);
+            delay(3000);
+            
+           
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Nouvelle op? (O/N)");
+            delay(2000); 
+            while (Serial.available() == 0); 
+            char choix = Serial.read(); 
+
+            if (choix == 'O' || choix == 'o') {
+              
+                choix1 = "";
+                choix2 = "";
+                choix3 = "";
+                commande1 = false;
+                commande2 = false;
+                commande3 = false;
+                nouvelleOperation = true; 
+            } else {
+                nouvelleOperation = false; 
+            }
+        }
     }
 }
+
 
 void verifnombre1() {
     String choix = "";
@@ -151,7 +197,7 @@ void verifope() {
     String choix = "";
     while (Serial.available() > 0) {
         char receivedChar = Serial.read();  
-        choix = String(receivedChar);  
+         choix = receivedChar; 
 
         if (choix.length() > 0) {
             int i = 0;
