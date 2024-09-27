@@ -60,7 +60,7 @@ void saisie() {
             lcd.setCursor(0, 1);
             lcd.print("Nb2: ");
             lcd.print(choix2);
-            delay(3000);
+            delay(1000);
         }
 
         if (commande1 && commande2) {  
@@ -80,7 +80,7 @@ void saisie() {
             lcd.setCursor(0, 0);
             lcd.print("Operation: ");
             lcd.print(choix3);
-            delay(3000);
+            delay(1000);
             
            
             float resultat = calcul();
@@ -93,7 +93,9 @@ void saisie() {
            
             lcd.clear();
             lcd.setCursor(0, 0);
-            lcd.print("Nouvelle op? (O/N)");
+            lcd.print("Nouvelle ");
+          	lcd.setCursor(0, 1);
+          	lcd.print("operation? (O/N)");
             delay(2000); 
             while (Serial.available() == 0); 
             char choix = Serial.read(); 
@@ -231,12 +233,11 @@ void verifope() {
     }
 }
 
-void calcul() {
+float calcul() {
     float nombre1 = choix1.toFloat();
     float nombre2 = choix2.toFloat();
     float resultat = 0.0;
 
-  
     if (choix3 == "+") {
         resultat = nombre1 + nombre2;
     } else if (choix3 == "-") {
@@ -251,18 +252,18 @@ void calcul() {
             lcd.print("Erreur: Division");
             lcd.setCursor(0, 1);
             lcd.print("par 0 !");
+            delay(3000);
+            return 0; 
         }
     }
 
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Resultat: ");
-    lcd.print(resultat);
-    delay(5000);
+    return resultat; 
 }
+
 
 void loop() {
     saisie();
 }
+
 
 ```
