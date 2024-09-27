@@ -63,7 +63,6 @@ void saisie() {
     if (commande1 && commande2 && commande3) { 
         lcd.clear();
         lcd.setCursor(0, 0);
-        lcd.print("Calcul en cours...");
         delay(1000);
         
         calcul();
