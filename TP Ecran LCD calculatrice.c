@@ -133,11 +133,14 @@ void loop()
 // Fonction pour valider si l'entrée est un nombre valide
 bool validerNombre(String message) {
     bool pointTrouve = false;
+  	bool virguleTrouve = false;
     for (int i = 0; i < message.length(); i++) {
         char c = message[i];
         if (c >= '0' && c <= '9') {
             continue;
-        } else if (c == '.' && !pointTrouve) {
+        } else if ( c == '-' && !virguleTrouve){
+                   virguleTrouve = true; // Un seul signe moins autorisé
+        }else if (c == '.' && !pointTrouve) {
             pointTrouve = true;  // Un seul point décimal autorisé
         } else {
             return false;  // Caractère non valide trouvé
