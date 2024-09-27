@@ -23,14 +23,14 @@ void loop() {
 }
 
 void choix() {
-  if (!choix1 && !affichageNombre && !refaireCalcul) {
+  if (!choix1 && !affichageNombre) {
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Choisi 1er nombre:");
     affichageNombre = true;
   }
 
-  if (!choix1 && Serial.available() > 0 && !refaireCalcul) {
+  if (!choix1 && Serial.available() > 0) {
     firstnumb = Serial.readStringUntil('\n');
     firstnumb.trim();
     if (firstnumb.length() > 0) {
@@ -39,14 +39,14 @@ void choix() {
     }
   }
 
-  if (choix1 && !choix2 && !affichageNombre && !refaireCalcul) {
+  if (choix1 && !choix2 && !affichageNombre) {
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Choisi 2eme nombre:");
     affichageNombre = true;
   }
 
-  if (choix1 && !choix2 && Serial.available() > 0 && !refaireCalcul) {
+  if (choix1 && !choix2 && Serial.available() > 0) {
     secondnumb = Serial.readStringUntil('\n');
     secondnumb.trim();
     if (secondnumb.length() > 0) {
@@ -55,14 +55,14 @@ void choix() {
     }
   }
 
-  if (choix1 && choix2 && !affichageNombre && !refaireCalcul) {
+  if (choix1 && choix2 && !affichageNombre) {
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Choisi le symbole:");
     affichageNombre = true;
   }
 
-  if (choix1 && choix2 && Serial.available() > 0 && !refaireCalcul) {
+  if (choix1 && choix2 && Serial.available() > 0) {
     operation = Serial.read();
     if (operation == '+' || operation == '-' || operation == '*' || operation == '/') {
       float num1 = firstnumb.toFloat();
