@@ -1,0 +1,22 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+void setup() {
+  Wire.begin(); // Initialise le bus I2C
+  Serial.begin(9600); // Initialise la communication série pour afficher les résultats
+
+  // Optionnel : Initialisation spécifique des capteurs
+  // ...
+}
+
+
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+lcd.begin(16,2);
+lcd.init();
+lcd.backlight();
+
+ printf("Entrez le premier nombre : ");
+
+printf("Entrez le second nombre : ");
