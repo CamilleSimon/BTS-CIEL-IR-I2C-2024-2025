@@ -1,1 +1,84 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+
+float premierNombre = 0.0;
+float deuxiemeNombre = 0.0;
+float resultat = 0.0;
+char operation = '';
+
+
+void setup()
+{
+  lcd.begin(16,2);
+  lcd.init();
+  lcd.backlight();
+}
+
+
+void saisirPremierNombre()
+{
+  float readChar;
+  int buff = Serial.available(); // mise à jour du nombre de caratères restant
+  Serial.print("Saisir le premier nombre : ");
+  if(buff > 0)
+    {
+        readChar = Serial.read(); // lecture du caractère
+        delay(10);
+        premierNombre = readChar;
+  	}
+}
+
+
+void saisirDeuxiemeNombre()
+{
+  float readChar;
+  int buff = Serial.available(); // mise à jour du nombre de caratères restant
+  Serial.print("Saisir le deuxieme nombre : ");
+  if(buff > 0)
+    {
+        readChar = Serial.read(); // lecture du caractère
+        delay(10);
+        deuxiemeNombre = readChar;
+  	}
+}
+
+
+void saisirOperation()
+{
+  char readChar;
+  int buff = Serial.available(); // mise à jour du nombre de caratères restant
+  Serial.print("Saisir l'opreation (+, -, *, /) : ");
+  if(buff > 0)
+    {
+        readChar = Serial.read(); // lecture du caractère
+        delay(10);
+        operation = readChar;
+  	}
+  
+}
+
+
+void calcul();
+{
+  if(operation == '+')
+    resultat = premierNombre + deuxiemeNombre;
+  if(operation == '-')
+    resultat = premierNombre - deuxiemeNombre;
+  if(operation == '*')
+    resultat = premierNombre * deuxiemeNombre;
+  if(operation == '/')
+    resultat = premierNombre / deuxiemeNombre;
+}
+
+
+void loop()
+{  
+  saisirPremierNombre();
+  saisirDeuxiemeNombre();
+  saisirOperation();
+  calcul();
+  lcd.print(resultat);
+}
