@@ -1,0 +1,33 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+void setup()
+{
+lcd.begin(16,2);
+lcd.init();
+lcd.backlight();
+}
+void saisir()
+{
+	char readChar;
+  	int buff = Serial.available();
+  	String s = "";
+
+	while(buff > 0) // tant qu'il reste des caractères dans le buffer
+    {	
+      	readChar = Serial.read();
+    	s = s + readChar;
+      	buff = Serial.available(); // mise à jour du nombre de caratères restant
+    }
+}
+
+
+void loop()
+{
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(1000); // Wait for 1000 millisecond(s)
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(1000); // Wait for 1000 millisecond(s)
+}
