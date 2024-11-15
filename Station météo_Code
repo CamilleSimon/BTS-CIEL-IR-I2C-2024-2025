@@ -1,0 +1,63 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Initialisation des variables globales
+int moisture = 0;       // Valeur de l'humidité
+int temperature = 0; // Valeur brute du capteur de température
+int temp = 0;           // Température en C
+
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C LCD(0x27, 16, 2);
+
+void setup() {
+    LCD.begin(16, 2);
+    LCD.init();         // Initialisation de l'afficheur
+    LCD.backlight();    // Allumer le rétroéclairage
+
+    // Initialisation des broches des capteurs
+    pinMode(A2, INPUT); // Broche de la température
+    pinMode(A3, INPUT); // Broche de l'humidité
+  
+    Serial.begin(9600);
+}
+
+void loop() {
+   
+    // Appel de la fonction Temperature() 
+    Temperature();
+  	// Appel de la fonction Humiditee() 
+  	Humiditee();
+ 
+}
+
+// Fonction pour lire et afficher la température
+void Temperature() {
+    // Lecture du capteur de température
+    temperature = analogRead(A2);
+  
+    // Conversion de la lecture analogique en température en C
+    temp = round(temperature * (5.0 / 1024.0) * 100 - 50);
+ 	/* TEST AFFICHAGE MT
+    Serial.print("Température: ");
+    Serial.print(temp);
+    Serial.println(" C");
+   	*/
+    // Affichage de la température sur l'écran LCD
+    LCD.setCursor(0, 1);  // Ligne 1, colonne 0
+    LCD.print("Temp: ");
+    LCD.print(temp);
+    LCD.print(" C   ");    // Efface les anciens caractères résiduels
+}
+
+// Fonction pour lire et afficher l'Humiditee
+void Humiditee() {
+	 // Lecture du capteur d'humidité
+    moisture = analogRead(A3);
+  
+    // Affichage de l'humidité sur l'écran LCD
+    LCD.setCursor(0, 0);  // Ligne 0, colonne 0
+    LCD.print("Humiditee: ");
+    LCD.print(moisture);
+    LCD.print("    ");    // Efface les anciens caractères résiduels
+  
+}
