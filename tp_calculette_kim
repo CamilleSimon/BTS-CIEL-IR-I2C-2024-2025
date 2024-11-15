@@ -1,11 +1,15 @@
-// C++ code
-//
-
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-
+// Initialisation de l'écran LCD
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// Variables globales
+String nombre1 = "";
+String nombre2 = "";
+String operation = "";
+bool operationValidee = false;
+bool erreurDivision = false;
 
 void setup() {
   Serial.begin(9600);
@@ -14,109 +18,87 @@ void setup() {
 }
 
 void loop() {
-  String num1 = "";
-  String num2 = "";
-  String operateur = "";
-  String continuer = "";
-  float resultat = 0;
-
-
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Premier nombre:");
-  while (num1 == "") {
-    while (Serial.available() > 0) {
-      char entree = Serial.read();
-      if (entree != '\n') num1 += entree;
-      delay(100);
-    }
-  }
-
- 
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Deuxieme nombre:");
-  while (num2 == "") {
-    while (Serial.available() > 0) {
-      char entree = Serial.read();
-      if (entree != '\n') num2 += entree;
-      delay(100);
-    }
-  }
-
+  // Saisie du premier nombre
+  nombre1 = lireEntree("Premier nombre:");
   
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Operation (+,-,*,/):");
-  while (operateur == "") {
-    while (Serial.available() > 0) {
-      char entree = Serial.read();
-      if (entree != '\n') operateur += entree;
-      delay(100);
-    }
-  }
-
+  // Saisie du deuxième nombre
+  nombre2 = lireEntree("Deuxieme nombre:");
   
-  float val1 = num1.toFloat();
-  float val2 = num2.toFloat();
+  // Saisie de l'opération
+  operation = lireEntree("Operation (+,-,*,/):");
 
+  // Calcul et affichage du résultat
+  afficherResultat();
   
-  if (operateur == "+") {
-    resultat = val1 + val2;
-  } else if (operateur == "-") {
-    resultat = val1 - val2;
-  } else if (operateur == "*") {
-    resultat = val1 * val2;
-  } else if (operateur == "/") {
-    if (val2 != 0) {
-      resultat = val1 / val2;
-    } else {
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Erreur:");
-      lcd.setCursor(0, 1);
-      lcd.print("Division par 0");
-      delay(2000);
-      resultat = 0; 
-    }
-  }
-
-  
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Resultat:");
-  lcd.setCursor(0, 1);
-  lcd.print(resultat);
-  delay(3000);
-
-  
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Nouvelle op?");
-  lcd.setCursor(0, 1);
-  lcd.print("y/n:");
-  while (continuer == "") {
-    while (Serial.available() > 0) {
-      char entree = Serial.read();
-      if (entree != '\n') continuer += entree;
-      delay(100);
-    }
-  }
-
-  
-  if (continuer == "n" || continuer == "N") {
+  // Demande de continuer ou quitter
+  if (!continuerProgramme()) {
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Au revoir!");
     delay(2000);
     lcd.noBacklight();
     lcd.noDisplay();
-    while (true); 
-  } else {
-  
-    num1 = "";
-    num2 = "";
-    operateur = "";
-    continuer = "";
+    while (true); // Arrêt du programme
   }
+}
+
+String lireEntree(String message) {
+  String entree = "";
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(message);
+  
+  // Attendre une entrée utilisateur avec une boucle `for`
+  for (int i = 0; i < 100; i++) { // Timeout potentiel après 100 itérations
+    if (Serial.available() > 0) {
+      char caractere = Serial.read();
+      if (caractere != '\n') entree += caractere;
+      delay(100);
+      if (!entree.isEmpty()) break; // Sortir si une entrée est détectée
+    }
+    delay(50);
+  }
+  return entree;
+}
+
+void afficherResultat() {
+  float nb1 = nombre1.toFloat();
+  float nb2 = nombre2.toFloat();
+  float resultat = 0;
+
+  erreurDivision = false;
+
+  if (operation == "+") {
+    resultat = nb1 + nb2;
+  } else if (operation == "-") {
+    resultat = nb1 - nb2;
+  } else if (operation == "*") {
+    resultat = nb1 * nb2;
+  } else if (operation == "/") {
+    if (nb2 != 0) {
+      resultat = nb1 / nb2;
+    } else {
+      erreurDivision = true;
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Erreur:");
+      lcd.setCursor(0, 1);
+      lcd.print("Division par 0");
+      delay(2000);
+      return;
+    }
+  }
+
+  // Afficher le résultat
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Resultat:");
+  lcd.setCursor(0, 1);
+  lcd.print(resultat);
+  delay(3000);
+}
+
+bool continuerProgramme() {
+  String choix = lireEntree("Continuer? (y/n):");
+  return (choix == "y" || choix == "Y");
 }
