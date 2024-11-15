@@ -1,0 +1,60 @@
+#include <Adafruit_LiquidCrystal.h>
+
+// C++ code
+//Montage : https://arduino-france.site/lcd-1602/
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+//initaialisation des variable globale
+float valeure1 = 0;//premier nombre
+float valeure2 = 0;//Second nombre
+
+char tab_operateurs[4] = {'+','-','*','/'};//les logo des opérations
+
+
+
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C LCD(0x27, 16, 2);
+
+void setup() {
+  	LCD.begin(16,2);
+    LCD.init(); // initialisation de l'afficheur
+    LCD.backlight();
+  	
+    Serial.begin(9600);
+  	
+  	
+	
+}
+
+void loop() {
+  
+int i = 0;
+    char readChar = 0; // caractère à lire
+	String Monitor;
+	
+  	if (Serial.available() 	> 0){ //condition si le buffeur est vide pour éviter une boucle d'exécution
+    	Monitor = Serial.readStringUntil('\n');//permet de recupérrer la saisie du buffer en entier
+  		Serial.println(Monitor);
+    }
+  
+	//affiche sur le LCD la valeur contenu dans le BUFFER
+  	LCD.setCursor(0, 0);
+    //Convertion en int de la valeure du buffer
+  	//Monitor1 = Monitor.toInt();
+    
+  	
+  	//Vérification de la valeure rentrée si c'est un nombre
+  	for(int i = 1 ; i < Monitor.len() ; i++ ){
+    if (i )
+  
+  
+  }
+    
+}
+
+
+
+
+
