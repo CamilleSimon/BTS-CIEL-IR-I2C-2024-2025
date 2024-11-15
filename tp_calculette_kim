@@ -1,10 +1,8 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-// Initialisation de l'écran LCD
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-// Variables globales
 String nombre1 = "";
 String nombre2 = "";
 String operation = "";
@@ -18,19 +16,15 @@ void setup() {
 }
 
 void loop() {
-  // Saisie du premier nombre
+
   nombre1 = lireEntree("Premier nombre:");
   
-  // Saisie du deuxième nombre
   nombre2 = lireEntree("Deuxieme nombre:");
   
-  // Saisie de l'opération
   operation = lireEntree("Operation (+,-,*,/):");
 
-  // Calcul et affichage du résultat
   afficherResultat();
   
-  // Demande de continuer ou quitter
   if (!continuerProgramme()) {
     lcd.clear();
     lcd.setCursor(0, 0);
@@ -48,7 +42,6 @@ String lireEntree(String message) {
   lcd.setCursor(0, 0);
   lcd.print(message);
   
-  // Attendre une entrée utilisateur avec une boucle `for`
   for (int i = 0; i < 100; i++) { // Timeout potentiel après 100 itérations
     if (Serial.available() > 0) {
       char caractere = Serial.read();
@@ -89,7 +82,6 @@ void afficherResultat() {
     }
   }
 
-  // Afficher le résultat
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Resultat:");
