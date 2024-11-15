@@ -1,0 +1,121 @@
+```C++
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+float nbr1, nbr2, resultat;
+char operation;
+bool continueCalculation = true;
+
+void setup()
+{
+  Serial.begin(9600);  
+  lcd.begin(16, 2);
+  lcd.init();
+  lcd.backlight();
+}
+
+void loop() 
+{
+  	while (continueCalculation) 
+    {
+    	lcd.clear();
+    	lcd.print("nbr1: ");
+    	Serial.println("Entrez le premier nombre :");
+    	nbr1 = lireNombre();  // Lecture du premier nombre
+
+    	lcd.clear();
+    	lcd.print("nbr2: ");
+    	Serial.println("Entrez le second nombre :");
+    	nbr2 = lireNombre();  // Lecture du second nombre
+
+    	lcd.clear();
+    	lcd.print("Operation: ");
+         Serial.println("Choisissez l'operation (+, -, *, /) :");
+    	operation = lireOperation();  // Lecture de l'opération
+
+    	// Calcul le résultat en fonction de l'opération choisie
+    	if (operation == '+') 
+      {
+      		resultat = nbr1 + nbr2;
+    	} 
+      else if (operation == '-') 
+      {
+     	 	resultat = nbr1 - nbr2;
+    	} 
+      else if (operation == '*') 
+      {
+     	 	resultat = nbr1 * nbr2;
+    	} 
+      else if (operation == '/') 
+      {
+     	if (nbr2 == 0) 
+      {    
+        		// Gestion de la division par zéro
+        		lcd.clear();
+        		lcd.print("Erreur");
+        		Serial.println("Erreur : Division par zero");
+        		delay(2000);
+        		continue;
+    		} 
+    		else 
+    		{
+        		resultat = nbr1 / nbr2;
+    		}
+    	} 
+    	else 
+        {
+      		lcd.clear();
+      		lcd.print("Erreur");
+      		Serial.println("Operation invalide.");
+      		delay(2000);
+      		continue;
+    	}
+
+    	// Affiche le résultat
+    	lcd.clear();
+    	lcd.print("Resultat: ");
+    	lcd.setCursor(0, 1);
+    	lcd.print(resultat);
+    	Serial.print("Resultat : ");
+    	Serial.println(resultat);
+
+    	delay(3000);  // Pause pour pouvoir lire le résultat
+
+    	// Demander à l'utilisateur s'il veut refaire une opération
+    	lcd.clear();
+    	lcd.print("Encore? (y/n): ");
+    	Serial.println("Voulez-vous refaire une operation ? (y/n)");
+    	continueCalculation = lireConfirmation();
+  	}
+
+  	lcd.clear();
+  	lcd.print("Fin programme");
+  	Serial.println("Fin du programme.");
+  	while (1);  // Boucle infinie pour arrêter le programme
+}
+
+// Fonction pour lire un nombre
+float lireNombre() 
+{
+  	while (Serial.available() == 0); // Attend la saisie
+  	return Serial.parseFloat();      // Lire un nombre flottant
+}
+
+// Fonction pour lire l'opération
+char lireOperation() 
+{
+  	while (Serial.available() == 0); // Attend la saisie
+  	return Serial.read();            // Lire un caractère
+}
+
+// Fonction pour demander confirmation pour une nouvelle opération
+bool lireConfirmation() 
+{
+  	while (Serial.available() == 0); // Attend la saisie
+  	char reponse = Serial.read();
+  	return (reponse == 'y' || reponse == 'Y'); // Retourne vrai si 'y' ou 'Y'
+}
+```
