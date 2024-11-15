@@ -5,13 +5,13 @@ Créer une station météo simple utilisant plusieurs capteurs I2C pour mesurer 
 
 ## Matériel nécessaire
 Vous emulerez sur votre machine en utilisant Visual Studio les éléments suivants :
-- 1 carte Arduino (Uno ou similaire)
-- 1 capteur BME280 (température, humidité, pression)
-- 1 capteur TSL2561 (luminosité)
+- 1 carte Arduino (Uno R3)
+- 1 capteur d'humidité Micro:bit
+- 1 capteur de température dans la catégorie "Autres composants"
 - 1 écran LCD 16x2 avec module I2C
 
 ## Branchements
-- Connectez tous les dispositifs I2C (BME280, TSL2561, LCD) aux broches SDA et SCL de l'Arduino.
+- Connectez tous les dispositifs I2C aux broches SDA et SCL de l'Arduino.
 - Alimentez tous les composants en 5V et GND.
 
 ## Partie 1
@@ -121,7 +121,7 @@ $lux = $_POST['lux'] ?? null;
 $heatIndex = $_POST['heatIndex'] ?? null;
 
 // Préparation et exécution de la requête SQL
-$sql = ""; // A completer avec la requete INSERT INTO coresspondant à votre base de données après la partie 4. Configuration de la base de données MySQL
+$sql = ""; // A completer avec la requete INSERT INTO correspondant à votre base de données après la partie 4. Configuration de la base de données MySQL
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ddddd", $temperature, $humidity, $pressure, $lux, $heatIndex);
 
