@@ -1,0 +1,122 @@
+// C++ code
+//
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  Serial.begin(9600);
+  lcd.init();
+  lcd.backlight();
+}
+
+void loop() {
+  String num1 = "";
+  String num2 = "";
+  String operateur = "";
+  String continuer = "";
+  float resultat = 0;
+
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Premier nombre:");
+  while (num1 == "") {
+    while (Serial.available() > 0) {
+      char entree = Serial.read();
+      if (entree != '\n') num1 += entree;
+      delay(100);
+    }
+  }
+
+ 
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Deuxieme nombre:");
+  while (num2 == "") {
+    while (Serial.available() > 0) {
+      char entree = Serial.read();
+      if (entree != '\n') num2 += entree;
+      delay(100);
+    }
+  }
+
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Operation (+,-,*,/):");
+  while (operateur == "") {
+    while (Serial.available() > 0) {
+      char entree = Serial.read();
+      if (entree != '\n') operateur += entree;
+      delay(100);
+    }
+  }
+
+  
+  float val1 = num1.toFloat();
+  float val2 = num2.toFloat();
+
+  
+  if (operateur == "+") {
+    resultat = val1 + val2;
+  } else if (operateur == "-") {
+    resultat = val1 - val2;
+  } else if (operateur == "*") {
+    resultat = val1 * val2;
+  } else if (operateur == "/") {
+    if (val2 != 0) {
+      resultat = val1 / val2;
+    } else {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Erreur:");
+      lcd.setCursor(0, 1);
+      lcd.print("Division par 0");
+      delay(2000);
+      resultat = 0; 
+    }
+  }
+
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Resultat:");
+  lcd.setCursor(0, 1);
+  lcd.print(resultat);
+  delay(3000);
+
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Nouvelle op?");
+  lcd.setCursor(0, 1);
+  lcd.print("y/n:");
+  while (continuer == "") {
+    while (Serial.available() > 0) {
+      char entree = Serial.read();
+      if (entree != '\n') continuer += entree;
+      delay(100);
+    }
+  }
+
+  
+  if (continuer == "n" || continuer == "N") {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Au revoir!");
+    delay(2000);
+    lcd.noBacklight();
+    lcd.noDisplay();
+    while (true); 
+  } else {
+  
+    num1 = "";
+    num2 = "";
+    operateur = "";
+    continuer = "";
+  }
+}
