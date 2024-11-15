@@ -1,4 +1,4 @@
-#include <Wire.h>
+'''#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
 // Création d'un objet LCD avec l'adresse I2C de l'écran
@@ -60,7 +60,7 @@ void loop() {
   lcd.print(result);// affiche le resultat
   delay(5000);// laisse le temps pour regarder le resultat
   lcd.clear();
-}
+}'''
 
 
 
