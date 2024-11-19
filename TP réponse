@@ -37,7 +37,6 @@ void saisirNombre()
   else
     premierNombre = s.toFloat();
   att += 1;
-  Serial.println(premierNombre);
 }
 
 
