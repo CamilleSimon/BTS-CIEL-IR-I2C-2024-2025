@@ -1,33 +1,84 @@
-#include <Wire.h>
+//#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
 // Création d'un objet LCD avec l'adresse I2C de l'écran
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+float nombre1;
+float nombre2;
+float resulat;
+char operation;
+
 void setup()
 {
 lcd.begin(16,2);
 lcd.init();
 lcd.backlight();
 }
-void saisir()
-{
-	char readChar;
-  	int buff = Serial.available();
-  	String s = "";
 
-	while(buff > 0) // tant qu'il reste des caractères dans le buffer
-    {	
-      	readChar = Serial.read();
-    	s = s + readChar;
-      	buff = Serial.available(); // mise à jour du nombre de caratères restant
+
+void PremierNombre()
+{
+  float readChar;
+  int buff = Serial.available(); // mise à jour du nombre de caratères restant
+  Serial.print("Saisir le nombre1 : ");
+  if(buff > 0)
+    {
+        readChar = Serial.read(); // lecture du caractère
+        delay(10);
+        nombre1 = readChar;
+  	}
+}
+
+
+void DeuxiemeNombre()
+{
+  float readChar;
+  int buff = Serial.available(); // mise à jour du nombre de caratères restant
+  Serial.print("Saisir le nombre2 : ");
+  if(buff > 0)
+    {
+        readChar = Serial.read(); // lecture du caractère
+        delay(10);
+        nombre2 = readChar;
+  	}
+}
+  void calcul()
+{
+
+  switch (operation)
+  {
+    case '+':
+    {
+      resulat = nombre1 + nombre2;
+      break;
     }
+    case '-':
+    {
+      resulat = nombre1 - nombre2;
+      break;
+    }
+    case '*':
+    {
+      resulat = nombre1 * nombre2;
+      break;
+    }
+    case '/':
+    {
+      resulat = nombre1 / nombre2;
+      break;
+    }
+  }
 }
 
 
 void loop()
 {
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(1000); // Wait for 1000 millisecond(s)
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(1000); // Wait for 1000 millisecond(s)
+  lcd.setCursor(0,0);
+  lcd.print("1er nombre:");
+  lcd.setCursor(0,1);
+  if(Serial.available() > 0)
+  {
+    char nombre = Serial.read();
+    lcd.print(nombre);
+  }
 }
