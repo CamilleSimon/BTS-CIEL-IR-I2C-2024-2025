@@ -1,4 +1,4 @@
-#include <Wire.h>
+//#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
 // Création d'un objet LCD avec l'adresse I2C de l'écran
@@ -15,6 +15,7 @@ int att = 0;
 void setup()
 {
   Serial.begin(9600);
+  Wire.begin(); // Initialise le bus I2C
   lcd.begin(16,2);
   lcd.init();
   lcd.backlight();
@@ -63,36 +64,49 @@ void calcul()
     resultat = premierNombre * deuxiemeNombre;
   if(operation == '/')
     resultat = premierNombre / deuxiemeNombre;
-  Serial.println(resultat);
-  att += 1;
 }
 
 
 void loop()
 {
   	if(att == 0)
+    {
+      	Serial.println("Instruction calculatrice :");
+  		Serial.println("Saisir (un par un) un nombre, une operation (+-*/), un nombre :");
+  		att += 1;
+    }
+  	if(att == 1)
     {  
    		buff = Serial.available(); 
       	if(buff > 0)
 			saisirNombre();
     }
   
-	if(att == 1)
+	if(att == 2)
    	{
      	buff = Serial.available();
      	if(buff > 0)
 			saisirOperation();
    	}
   
-  	if(att == 2)
+  	if(att == 3)
    	{
      	buff = Serial.available();
      	if(buff > 0)
 			saisirNombre();
    	}
  
-  	if(att == 3)
+  	if(att == 4)
    	{
     	calcul();
+      	Serial.print(premierNombre);
+      	Serial.print(" ");
+      	Serial.print(operation);
+      	Serial.print(" ");
+      	Serial.print(deuxiemeNombre);
+      	Serial.print(" = ");
+      	Serial.println(resultat);
+      	premierNombre = 0.0;
+ 		att = 0;
    	}
 }
