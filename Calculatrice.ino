@@ -1,14 +1,14 @@
 // C++ code
 //
-//#include <Wire.h>
+#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
 LiquidCrystal_I2C lcd(0x20, 16, 2);
-float premier_nombre;
-float deuxieme_nombre;
+float premier_nombre = 0.0;
+float deuxieme_nombre = 0.0;
 char op;
-String resultat= "";
-int wait;
+int wait = 0;
+int buffer = Serial.available();
 
 void setup()
 {
@@ -22,7 +22,6 @@ void setup()
 void saisir_nombre()
 {
   Wire.beginTransmission(0x20);
-  int buffer = Serial.available();
   char c;
   String s = "";
   while(buffer > 0)
@@ -31,68 +30,92 @@ void saisir_nombre()
     s += c;
     buffer = Serial.available();
   }
-  //Wire.write(s);
-  Wire.endTransmission();
   if(premier_nombre != 0.0)
+  {
     deuxieme_nombre = s.toFloat();
+    Wire.write((byte)deuxieme_nombre);
+  }
   else
+  {
     premier_nombre = s.toFloat();
+    Wire.write((byte)premier_nombre);
+  }
+  //Wire.endTransmission();
   wait += 1;
 }
 
 void operateur()
 {
   Wire.beginTransmission(0x20);
-  int buffer = Serial.available();
   char c;
-  while(buffer > 0)
+  if(buffer > 0)
   {
     c = Serial.read();
   }
   op = c;
-  //Wire.write(op);
-  Wire.endTransmission();
+  Wire.write(op);
+  //Wire.endTransmission();
   wait += 1;
 }
 
 void calcul()
 {
+  float resultat;
   Wire.beginTransmission(0x20);
   switch (op)
   {
     case '+':
     {
-      resultat = String(premier_nombre + deuxieme_nombre);
+      resultat = premier_nombre + deuxieme_nombre;
       break;
     }
     case '-':
     {
-      resultat = String(premier_nombre - deuxieme_nombre);
+      resultat = premier_nombre - deuxieme_nombre;
       break;
     }
     case '*':
     {
-      resultat = String(premier_nombre * deuxieme_nombre);
+      resultat = premier_nombre * deuxieme_nombre;
       break;
     }
     case '/':
     {
-      resultat = String(premier_nombre / deuxieme_nombre);
+      resultat = premier_nombre / deuxieme_nombre;
       break;
     }
   }
-  //Wire.write(resultat);
-  Wire.endTransmission();
+  //Serial.println(resultat);
+  Wire.write((byte)resultat);
+  //Wire.endTransmission();
+  wait += 1;
 }
 
 void loop()
 {
   if (wait == 0)
-  	saisir_nombre();
+  {
+    buffer = Serial.available();
+    if (buffer > 0)
+      saisir_nombre();
+  }
+  
   if (wait == 1)
-  	operateur();
+  {
+    buffer = Serial.available();
+    if (buffer > 0)
+      operateur();
+  }
+  
   if (wait == 2)
-  	saisir_nombre();
+  {
+    buffer = Serial.available();
+    if (buffer > 0)
+      saisir_nombre();
+  }
+  
   if (wait == 3)
-  	calcul();
+  {
+      calcul();
+  }
 }
