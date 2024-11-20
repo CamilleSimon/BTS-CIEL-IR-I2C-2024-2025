@@ -38,4 +38,38 @@ void saisirVal(String s)
     resultat = premierNombre * deuxiemeNombre;
   if(operation == '/')
     resultat = premierNombre / deuxiemeNombre;
+  
+  void loop()
+{  
+  saisirVal();
+  saisirOperation();
+  calcul();
+  lcd.print(resultat);
+{
+  	if(att == 0)
+    {  
+   		buff = Serial.available(); 
+      	if(buff > 0)
+			saisirVal();
+    }
+
+	if(att == 1)
+   	{
+     	buff = Serial.available();
+     	if(buff > 0)
+			saisirOperation();
+   	}
+
+  	if(att == 2)
+   	{
+     	buff = Serial.available();
+     	if(buff > 0)
+			saisirVal();
+   	}
+
+  	if(att == 3)
+   	{
+    	calcul();
+   	}
+}
 }
