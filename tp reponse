@@ -3,10 +3,13 @@
 
 // Création d'un objet LCD avec l'adresse I2C de l'écran
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+int buff = Serial.available();
 float nombre1;
 float nombre2;
 float resulat;
 char operation;
+String carre = "";
+char moula;
 
 void setup()
 {
@@ -16,33 +19,33 @@ lcd.backlight();
 }
 
 
-void PremierNombre()
+
+void Nombre()
 {
-  float readChar;
-  int buff = Serial.available(); // mise à jour du nombre de caratères restant
-  Serial.print("Saisir le nombre1 : ");
-  if(buff > 0)
+  
+  char readChar;
+  while(buff > 0)
     {
-        readChar = Serial.read(); // lecture du caractère
+        readChar = Serial.read(); 
         delay(10);
-        nombre1 = readChar;
+        carre += readChar;
+    	buff = Serial.available();
   	}
+
 }
 
-
-void DeuxiemeNombre()
+void operation
 {
-  float readChar;
-  int buff = Serial.available(); // mise à jour du nombre de caratères restant
-  Serial.print("Saisir le nombre2 : ");
-  if(buff > 0)
-    {
-        readChar = Serial.read(); // lecture du caractère
-        delay(10);
-        nombre2 = readChar;
-  	}
+  char readChar;
+  if(buff >0)
+  {
+    readChar = Serial.read();
+    moula = readChar
+  }
 }
-  void calcul()
+  
+
+void calcul()
 {
 
   switch (operation)
