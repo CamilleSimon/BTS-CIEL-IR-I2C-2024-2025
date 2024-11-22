@@ -16,7 +16,7 @@ float valid (String s)
       entreUtilisateur = Serial.readUntil("\n");
     }
     int i = 0;
-    while (i<entreUtilisateur.leath() ){
+    while (i<entreUtilisateur.leath() && caracInvalid == false){
       int c = entreUtilisateur[i];
       if ((c < 48 // c > 57) && c != 46)
         caracInvalid = true;
