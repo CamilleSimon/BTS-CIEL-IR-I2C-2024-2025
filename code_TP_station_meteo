@@ -1,0 +1,30 @@
+// C++ code
+//
+#include <LiquidCrystal_I2C.h>
+#include <wire.h>
+
+void setup()
+{
+  Serial.begin(9600);  
+  lcd.begin(16, 2);
+  lcd.init();
+  lcd.backlight();
+  wire.begin();
+}
+
+void loop()
+{
+  
+}
+
+float lireHumidite()
+{
+  float humidite = ;
+  return humidite;
+}
+
+float lireTemperature()
+{
+  float temperature = ;
+  return temperature;
+}
