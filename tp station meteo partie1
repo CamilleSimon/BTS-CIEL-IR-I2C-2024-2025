@@ -1,0 +1,76 @@
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); // adresse de l'écran
+  
+void setup()
+{
+  lcd.begin(16, 2);
+  lcd.init();
+  lcd.backlight();
+}
+
+int readTemp() {
+  float tempC = 0;
+  return tempC;
+}
+
+float readHumi() {
+  float humi = 0;
+  return humi;
+}
+
+float readPress() {
+  float press = 0;
+  return press;
+}
+
+float tempF(int tempC) {
+  return tempC * 9.0 / 5.0 + 32.0;
+}
+
+float simHI = 0;
+
+void calculateHI(float tempC, float humi) {
+  if (tempF(tempC) <= 80) {
+    simHI = 0.5 * (tempF(tempC) + 61.0 + ((tempF(tempC) - 68.0) * 1.2) + (humi * 0.094));
+  } else {
+    float compHI = 0;
+    compHI = -42.379 + 2.04901523 * tempF(tempC) + 10.14333127 * humi - 0.22475541 * tempF(tempC) * humi
+              - 0.00122874 * tempF(tempC) * tempF(tempC) - 0.05481717 * humi * humi
+              + 0.00122874 * tempF(tempC) * tempF(tempC) * humi + 0.00085282 * tempF(tempC) * humi * humi
+              - 0.00000199 * tempF(tempC) * tempF(tempC) * humi * humi;
+  }
+}
+
+void loop()
+{
+  // Fonction pour lire les données de chaque capteur
+  float tempC = readTemp();
+  float humi = readHumi();
+  float press = readPress();
+  
+  // Affichez les données sur l'écran LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("TempC: ");
+  lcd.print(tempC);
+  lcd.print(" C");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Humi: ");
+  lcd.print(humi);
+  lcd.print(" %");
+
+  delay(2000);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Press: ");
+  lcd.print(press);
+  lcd.print(" hPa");
+
+  delay(2000);
+  
+  // Conversion de la température de Celsius en Fahrenheit
+  calculateHI(tempC, humi);
+}
