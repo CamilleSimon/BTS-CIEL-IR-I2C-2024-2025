@@ -10,30 +10,53 @@ float denbr;
 float result;
 String operateur;
 
+float valid(String s) {
+    bool caracInvalid = false;
+    String entreUtilisateur = "";
+
+    do {
+        lcd.print(s);
+        entreUtilisateur = ""; 
+        // Attendre que l'utilisateur saisisse une donnée
+        while (Serial.available() == 0);
+        // Lire la saisie de l'utilisateur
+        entreUtilisateur = Serial.readUntil('\n');
+        int i = 0;
+        while (i < entreUtilisateur.length() && caracInvalid==false) {
+            int c = entreUtilisateur[i];
+            if ((c < 48 || c > 57) && c != 46) {  // Vérifie que ce n'est pas un chiffre ou un point (.)
+                caracInvalid = true;
+            }
+            i++;
+        }
+        if (caracInvalid) {
+            lcd.clear();
+            lcd.print("Erreur: Invalide");
+            delay(2000);  // Affiche un message d'erreur pendant 2 secondes
+        }
+    } while (caracInvalid);
+    return entreUtilisateur.toFloat();  // Convertit la chaîne en float
+}
+
 void setup() {
-  lcd.begin(16, 2);
-  lcd.init();
-  lcd.backlight();
-  Serial.begin(9600); 
+    lcd.begin(16, 2);
+    lcd.init();
+    lcd.backlight();
+    Serial.begin(9600); 
 }
 
 void loop() {
-  lcd.setCursor(2, 0);//la ou sera afficher le texte
-  lcd.print("1er nbr : ");//texte à afficher
+  unnbr = valid("Entrez le 1er nbr");
+  denbr = valid("Entrez le 2eme nbr");
   unnbr = Serial.parseFloat(); // Lire le premier nombre
-  lcd.clear();//enleve le texte afficher
-
-  lcd.setCursor(2, 0);//la ou sera afficher le texte
-  lcd.print("2eme nbr:");//texte à afficher
   denbr = Serial.parseFloat(); // Lire le deuxième nombre
-  lcd.clear();//enleve le texte afficher
 
   lcd.setCursor(0, 0);//la ou sera afficher le texte
   lcd.print("Choisir operateur");//texte à afficher
   lcd.setCursor(0, 1);//la ou sera afficher le texte
   lcd.print("+,-,*,/");//texte à afficher
   operateur = Serial.readString(); // Lire l'opérateur
-  lcd.clear();//enleve le texte afficher
+ 
   
 //fait les operations demander
   if (operateur == "+") {
@@ -61,6 +84,5 @@ void loop() {
   delay(5000);// laisse le temps pour regarder le resultat
   lcd.clear();
 }
-
 
 
