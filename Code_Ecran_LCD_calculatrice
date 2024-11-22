@@ -1,0 +1,109 @@
+[Montage Ecran LCD calculatrice](https://www.tinkercad.com/things/0aoXwUwuFQY-ecran-lcd-calculatrice)
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// C++ code
+//
+
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup()
+{
+  lcd.begin(16, 2); // Initialisation du LCD avec 16 colonnes et 2 lignes
+  lcd.init(); // Configuration initiale de l'écran LCD
+  lcd.backlight(); // Activation du rétroéclairage de l'écran LCD
+  Serial.begin(9600); // Initialisation de la communication série à 9600 bauds
+}
+
+void loop()
+{
+  int x = 1; // Initialisation de la variable de contrôle
+  x = calcul(); // Appel de la fonction `calcul` pour effectuer l'opération
+  while (x != 0) { // Boucle pour attendre si une erreur s'est produite
+    delay(500); // Pause de 500 ms avant de vérifier à nouveau
+  }
+  delay(1000); // Pause de 1 seconde avant de relancer la boucle
+}
+
+int calcul()
+{
+  // Déclaration des variables pour les saisies utilisateur et le résultat
+  String cn1, cn2;
+  float n1, n2 ,resultat = 0;
+  
+  Serial.print("\nRentrez votre premiere valeur: ");
+  lcd.clear(); // Efface l'écran LCD
+  lcd.setCursor(0, 0); // Positionne le curseur sur la première ligne
+  lcd.print("Valeur 1: "); // Affiche "Valeur 1:" sur l'écran LCD
+  while (!Serial.available()); // Attend une entrée utilisateur via le port série
+  cn1 = Serial.readStringUntil('\n');
+  lcd.setCursor(0, 1); // Positionne le curseur sur la deuxième ligne
+  lcd.print(cn1); // Affiche la valeur entrée sur l'écran LCD
+  delay(500); // Pause de 500 ms pour avoir le temps de lire la valeur
+  n1 = cn1.toFloat();
+  Serial.print("\n1 = "); Serial.println(n1);
+  
+  
+  Serial.print("\nRentrez votre deuxieme valeur: ");
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Valeur 2: ");
+  while (!Serial.available());
+  cn2 = Serial.readStringUntil('\n');
+  lcd.setCursor(0, 1);
+  lcd.print(cn2);
+  delay(500);
+  n2 = cn2.toFloat();
+  Serial.print("\n2 = "); Serial.println(n2);
+  
+  char operateur; 
+  do {
+    Serial.print("\nRentrez votre opérateur (+, -, *, /): ");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Operateur: ");
+    while (!Serial.available());
+    operateur = Serial.read(); 
+  } while(operateur != '+' && operateur != '-' && operateur != '*' && operateur != '/' );
+  Serial.print("\noperateur = "); Serial.println(operateur);
+  lcd.setCursor(0, 1);
+  lcd.print(operateur);
+  delay(500);
+  
+  switch (operateur) {
+    case '+':
+      resultat = n1 + n2;
+      break;
+    case '-':
+      resultat = n1 - n2;
+      break;
+    case '*':
+      resultat = n1 * n2;
+      break;
+    case '/':
+      if (n2 != 0)
+        resultat = n1 / n2;
+      else {
+        Serial.println("Erreur: Division par zero !");
+        lcd.clear();
+        lcd.print("Erreur: Div 0");
+        return -1;
+      }
+    break;
+  }
+  Serial.print("\nresultat = "); Serial.println(resultat);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Resultat: ");
+  lcd.setCursor(0, 1);
+  lcd.print(resultat);
+  delay(1000);
+  
+
+  
+  return 0;
+  
+}
+

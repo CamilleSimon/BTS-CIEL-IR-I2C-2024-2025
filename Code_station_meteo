@@ -1,0 +1,62 @@
+[Montage station_meteo](https://www.tinkercad.com/things/cexe1CfKTMs-stationmeteo)
+
+#include <LiquidCrystal_I2C.h>
+
+
+// C++ code
+//.
+LiquidCrystal_I2C lcd(0x27, 16, 2); 
+
+void setup()
+{
+  pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
+  lcd.init();
+  lcd.backlight();
+  Serial.begin(9600);
+  
+}
+
+void loop()
+{
+  afficherMesure();
+  delay(1000); 
+  
+}
+
+
+float readMoisture()
+{
+  float moisture;
+  moisture = (analogRead(A0) / 880.0) * 100.0;
+  return moisture;
+  
+}
+
+float readTemperature()
+{
+  float temperature;
+  temperature =analogRead(A1);
+  return temperature;
+  
+}
+
+void afficherMesure()
+{
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Moisissure :");
+  lcd.setCursor(0, 1);
+  lcd.print(readMoisture());
+  lcd.print("%");
+  delay(2000);
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Temperature :");
+  lcd.setCursor(0, 1);
+  lcd.print(readTemperature());
+  lcd.print(" C");
+  delay(2000);
+  
+}
