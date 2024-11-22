@@ -1,36 +1,56 @@
-#include <Adafruit_LiquidCrystal.h>
-#include <wire.h>
-#include <adafruit_BME280>
-#include <adafruit_TSL2461>
-#include <LiquidCrystal_I2C>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-int seconds = 0;
-
-Adafruit_LiquidCrystal lcd_1(0);
-int moisissure =0;
+//int moisissure =1;
 int temperature = 0;
-int humidité = 0; //[0-100]
-void setup()
-{
-  lcd_1.begin(16, 2);
+//int humidite = 0; // [0-100]
 
-  lcd_1.print("hello world");
+void setup() {
+  // démarre le LCD
+  lcd.init();
+  
+  lcd.backlight();   // allume l'écran
+  lcd.begin(16, 2); 
+  Serial.begin(9600);
+  lcd.setCursor(0, 0);  // initialise la position du curseur 
+  lcd.print("Hello, World!");
+
 }
 void getcapteur()
 {
-  buff = Serial.available
-  moisissure =Serial.read()
-  
-  buff = Serial.available
+  char readChar = 0;
+  int buff = Serial.available();
 
-void loop()
+  while(buff > 0) // tant qu'il reste des caractères dans le buffer
+  {
+      readChar = Serial.read(); // lecture du caractère
+      temperature = temperature+readChar;// ajouter le contenu de readChar dans mot
+      buff = Serial.available();
+  }
+}
+  
+
+void loop() 
 {
-  lcd_1.setCursor(0, 1);
-  lcd_1.print(seconds);
-  lcd_1.setBacklight(1);
-  delay(500); // Wait for 500 millisecond(s)
-  lcd_1.setBacklight(0);
-  delay(500); // Wait for 500 millisecond(s)
-  seconds += 1;
+  
+
+  lcd.clear(); 
+  lcd.setCursor(0, 0);
+  lcd.print("Temp: ");
+  lcd.print(getcapteur(temperature));
+  lcd.print("C");
+
+  /*lcd.setCursor(0, 1);
+  lcd.print("Humidite: ");
+  lcd.print(humidite);
+  lcd.print("%");
+  delay(2000);
+  
+  lcd.clear();
+  lcd.print("moisissure: ");
+  lcd.print(moisissure);*/
+
+  delay(2000);  // réactualise lécran toute les 2 secondes
 }
