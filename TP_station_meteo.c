@@ -10,8 +10,8 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 float humidite = 0;
 int temperature = 0;
-int hisimp = 0;
-int hicomp = 0;
+float hisimp = 0;
+float hicomp = 0;
 
 
 void setup()
