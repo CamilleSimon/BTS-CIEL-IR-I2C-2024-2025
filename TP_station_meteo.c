@@ -9,7 +9,7 @@
 // Création d'un objet LCD avec l'adresse I2C de l'écran
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 int humidite = 0;
-int temp = 0;
+int temperature = 0;
 int hisimp = 0;
 int hicomp = 0;
 
@@ -45,9 +45,9 @@ void loop()
   humidite = analogRead(A3)*(5.0/1024.0);
   temperature = round(analogRead(A2)*(5.0/1024.0)*100-50)*9/5+32;
   
-  hisimp = 0.5 * (temp + 61.0 + ((temp-68.0)*1.2) + (humidite*0.094));
+  hisimp = 0.5 * (temperature + 61.0 + ((temperature-68.0)*1.2) + (humidite*0.094));
   hicomp = calculateHeatIndex(temperature, humidite);
-  Serial.println(temp);
+  Serial.println(temperature);
   lcd.setCursor(0,0);
   lcd.print("hiSimp : ");
   lcd.print(hisimp);
@@ -56,8 +56,5 @@ void loop()
   lcd.print("hicomp : ");
   lcd.print(hicomp);
   lcd.print(" F   ");
-  delay(200);
-	
-  
-  
+  delay(200); 
 }
