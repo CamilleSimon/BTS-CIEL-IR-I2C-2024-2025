@@ -28,25 +28,25 @@ void setup()
   Serial.begin(9600);
 }
 
-float calculateHeatIndex(float temperature, float humidity) {
+float calculateHeatIndex(float temperature, float humidite) {
   return -42.379 +
          2.04901523 * temperature +
-         10.14333127 * humidity -
-         0.22475541 * temperature * humidity -
+         10.14333127 * humidite -
+         0.22475541 * temperature * humidite -
          0.00683783 * temperature * temperature -
-         0.05481717 * humidity * humidity +
-         0.00122874 * temperature * temperature * humidity +
-         0.00085282 * temperature * humidity * humidity -
-         0.00000199 * temperature * temperature * humidity * humidity;
+         0.05481717 * humidite * humidite +
+         0.00122874 * temperature * temperature * humidite +
+         0.00085282 * temperature * humidite * humidite -
+         0.00000199 * temperature * temperature * humidite * humidite;
 }
 
 void loop()
 {
   humidite = analogRead(A3)*(5.0/1024.0);
-  temp = round(analogRead(A2)*(5.0/1024.0)*100-50)*9/5+32;
+  temperature = round(analogRead(A2)*(5.0/1024.0)*100-50)*9/5+32;
   
   hisimp = 0.5 * (temp + 61.0 + ((temp-68.0)*1.2) + (humidite*0.094));
-  hicomp = calculateHeatIndex(temp, humidite);
+  hicomp = calculateHeatIndex(temperature, humidite);
   Serial.println(temp);
   lcd.setCursor(0,0);
   lcd.print("hiSimp : ");
