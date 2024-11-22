@@ -1,0 +1,40 @@
+//variable globale
+char nbvalid [] = [];//liste de tout les caractère possible
+
+
+
+void loop(){
+    //appel de la fonction
+    nb1 = nombreValide("entrez le premier nombre")
+    nb2 = nombreValide("entrez le second nombre")
+
+}
+
+
+
+//defnition
+float nombreValide(String s){
+    bool caracInvalid = false;
+    do//do while car on veut de l'operation s'éffectue au moin une fois
+    {
+        lcd.print(s);
+        String entreUtilisateur = "";
+        if(Serial.available()){
+            entreUtilisateur = Serial.readUntil("/n");
+        }
+        int =0;
+        while ( i < entreUtilisateur.length() && caracInvalid == false ) 
+        {
+            int c = entreUtilisateur[i];
+            if ((c < 48 || c > 57) && c != 46) //les parrentèses permettent de forcer ce qui il y a dans les parrentèse
+            {
+                caracInvalid = true;
+            }
+            i++;
+        }
+    } while (caracInvalid == true);
+        return entreUtilisateur.toFloat();
+    
+}
+
+
