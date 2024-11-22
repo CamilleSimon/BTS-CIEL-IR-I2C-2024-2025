@@ -1,0 +1,44 @@
+// C++ code
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+float premier_chiffre;
+float deuxieme_chiffre;
+
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT);
+ 	lcd.begin(16,2);
+	lcd.init();
+	lcd.backlight();
+  	//lcd.setCursor(0, 0);
+  	//lcd.print("Bonjour");
+}
+
+void loop()
+{
+  //Premier chiffre
+  	lcd.setCursor(0,0);
+  	lcd.print("Inserez le premier chiffre");
+  	int buffer = Serial.available();
+	if(buffer > 0) // si le buffer n'est pas vide
+    {
+        // Traitement
+    }
+ 	premier_chiffre=Serial.parseFloat();
+ 	lcd.clear(); 
+  
+  //deuxieme chiffre
+  	lcd.setCursor(0,0);
+  	lcd.print("Inserez le deuxieme chiffre");
+  	//int buffer = Serial.available();
+	//if(buffer > 0) // si le buffer n'est pas vide
+    //{
+        // Traitement
+    //}
+ 	//deuxième_chiffre=Serial.parseFloat();
+ 	//lcd.clear(); 
+  
+
+}

@@ -1,0 +1,93 @@
+// C++ code
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+float nb1, nb2;
+float reponse;
+String operation;
+
+float valid (String s) {
+    bool caracInvalid = false;
+    do {
+        lcd.print(s);
+        String entreUtilisateur = " ";
+        if (Serial.available()) 
+        {
+            entreUtilisateur = Serial.readString('\n');
+        }
+
+        int i = 0;
+        while (i < entreUtilisateur.length() && caracInvalid == false) {
+            int c = entreUtilisateur[i];
+            if ((c < 48 || c > 57) && c != '46') {
+                caracInvalid = true;
+            }
+            i++;
+        }
+    } while (caracInvalid == true);
+
+    if (entreUtilisateur != "") 
+    {
+        return entreUtilisateur.toFloat();
+    } 
+  else 
+  	{
+     lcd.Print("Nombre invalide");
+  	}
+}
+
+void setup() {
+    lcd.init();
+    lcd.backlight();
+    Serial.begin(9600);
+}
+
+void loop() {
+    nb1 = valid("Entrez le premier nombre : ");
+    while (Serial.available() == 0) 
+    {
+      
+    }
+    nb1 = Serial.parseFloat();
+    lcd.clear();  
+  
+    nb2 = valid("Entrez le deuxième nombre : ");
+    lcd.setCursor(0, 0);
+    while (Serial.available() == 0)
+    {
+      
+    }
+    nb2 = Serial.parseFloat();
+    lcd.clear(); 
+  
+    lcd.setCursor(0, 0); 
+    lcd.print("Entrez l'operateur : ");
+    lcd.setCursor(0, 1);
+    lcd.print("+,-,*,/");
+    while (Serial.available() == 0) 
+    {
+      
+    }
+    operation = Serial.readString();
+    lcd.clear();
+  
+    if (operation == "+")
+    {
+        reponse = nb1 + nb2;
+    }
+    if (operation == "-")
+    {
+        reponse = nb1 - nb2;
+    }
+    if (operation == "*") 
+    {
+        reponse = nb1 * nb2;
+    }
+    if (operation == "/") 
+    {
+        reponse = nb1 / nb2;
+    }
+}
+
+ 
