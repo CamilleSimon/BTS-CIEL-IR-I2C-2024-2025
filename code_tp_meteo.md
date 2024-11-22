@@ -1,39 +1,58 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <math.h>
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+
 void setup() {
-  lcd.begin(16, 2);
-  lcd.init();
+  lcd.init(); 
   lcd.backlight();
   Serial.begin(9600);
-  pinMode(A0, INPUT);
-  pinMode(A1, INPUT);
-  
+  pinMode(A0, INPUT); 
+  pinMode(A1, INPUT); 
 }
 
 void loop() {
-  int humidite = analogRead(A0);
   
+  float humidite = analogRead(A0); 
+  humidite = (humidite / 880.0) * 100.0; // Conversion en pourcentage 
 
-   
-   // Mesure la tension sur la broche A1
-  float valBrute = analogRead(A1);
-  // Calcul de la température en degré Celcius
-  float valTemp = valBrute * (5.0/1023.0 *100.0);
+  float tempCelsius = analogRead(A1) * (5.0 / 1023.0 * 100.0); // Température en °C
+  float tempFahrenheit = tempCelsius * 1.8 + 32; // Conversion en °F
 
+  // Calcul de l'indice de confort thermique
+  float HI; 
+  if (tempFahrenheit < 80 || humidite < 80) {
+    // Formule simplifiée
+    HI = 0.5 * (tempFahrenheit + 61.0 + ((tempFahrenheit - 68.0) * 1.2) + (humidite * 0.094));
+  } else {
+    // Formule complète
+    HI = -42.379 
+         + 2.04901523 * tempFahrenheit 
+         + 10.14333127 * humidite 
+         - 0.22475541 * tempFahrenheit * humidite 
+         - 0.00683783 * pow(tempFahrenheit, 2) 
+         - 0.05481717 * pow(humidite, 2) 
+         + 0.00122874 * pow(tempFahrenheit, 2) * humidite 
+         + 0.00085282 * tempFahrenheit * pow(humidite, 2) 
+         - 0.00000199 * pow(tempFahrenheit, 2) * pow(humidite, 2);
+  }
 
-  // Affichage sur LCD.
-  lcd.backlight();
-  lcd.setCursor(0,0);
-  lcd.print("Temperature : ");
-  lcd.setCursor(1,1);
-  lcd.print(valTemp);
-  lcd.setCursor(1,2);
-  lcd.print(" Celcius");
-  delay(1000);
+  // Conversion du résultat en Celsius pour l'affichage
+  float Celsius = (HI - 32) / 1.8;
+
+  // Affichage sur l'écran LCD
   
+  lcd.setCursor(0, 0);
+  lcd.print("Hum: ");
+  lcd.print(humidite);
+  lcd.print("%");
+
+  lcd.setCursor(0, 1);
+  lcd.print("HI: ");
+  lcd.print(Celsius);
+  lcd.print("C");
+
   
-  
-  delay(200);
+ 
 }
