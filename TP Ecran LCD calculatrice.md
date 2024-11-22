@@ -29,6 +29,8 @@ Utilisez les broches **SDA** et **SCL** de l'Arduino pour connecter votre écran
 
 N'oubliez pas de connecter les broches d'alimentation (VCC et GND) et d'ajouter les résistances de pull-up sur les lignes SDA et SCL si nécessaire.
 
+![image](https://github.com/user-attachments/assets/85a83573-db7b-4f82-b9d3-eb25afb41467)
+
 ### 3. Initialisation de la bibliothèque I2C
 
 Pour faciliter l'utilisation de l'écran LCD via I2C, nous allons utiliser la bibliothèque LiquidCrystal_I2C. Dans votre code Arduino, vous devrez inclure cette bibliothèque et initialiser l'écran avec la bonne adresse I2C.
