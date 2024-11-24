@@ -1,0 +1,184 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Initialisation des variables globales
+float valeure1 = 0;  // Premier nombre
+float valeure2 = 0;  // Second nombre
+char operateur;      // L'opérateur
+float resultat = 0.00;
+char tab_operateurs[4] = {'+', '-', '*', '/'};  // Les opérateurs disponibles
+char tab_Nombre[11] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9','.'};
+
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C LCD(0x27, 16, 2);
+
+void setup() {
+  LCD.begin(16, 2);
+  LCD.init();  // Initialisation de l'afficheur
+  LCD.backlight();
+  
+  Serial.begin(9600);  // Démarrage de la communication série
+  Serial.println("Entrer le 1er nombre");
+}
+
+
+
+
+
+
+void loop() {
+  String Monitor1;
+  String Monitor2;
+  String Monitor3;
+  
+  // Saisie du premier nombre
+  if (Serial.available() > 0) {  // Condition pour vérifier si des données sont disponibles
+    Monitor1 = Serial.readStringUntil('\n'); // Récupère la saisie jusqu'à un retour à la ligne
+    Serial.println(Monitor1);  // Affiche la chaîne complète dans le moniteur série
+    
+    // Vérification si le premier nombre est valide
+    if (VerificationNombre(Monitor1)) {
+      Serial.println("nombre1 est valide.");
+      valeure1 = Monitor1.toFloat();
+      LCD.clear();
+      LCD.setCursor(0, 0);
+      LCD.print("1er Nombre: ");
+      LCD.print(valeure1);
+      Serial.println("Entrer le nombre2");
+      
+      // Attendre l'entrée du second nombre
+      while (Serial.available() == 0) {  // Attendre jusqu'à ce qu'une nouvelle saisie soit disponible
+        delay(100);  // Attendre un peu
+      }
+      
+      Monitor2 = Serial.readStringUntil('\n');  // Récupère la saisie du second nombre
+      Serial.println(Monitor2);  // Affiche le second nombre dans le moniteur série
+     
+      // Vérification si le second nombre est valide
+      if (VerificationNombre(Monitor2)) {
+        Serial.println("nombre2 est valide.");
+        valeure2 = Monitor2.toFloat();
+        LCD.clear();
+        LCD.setCursor(0, 0);
+        LCD.print("Nombre1: ");
+        LCD.print(valeure1);
+        LCD.setCursor(0, 1);  // Afficher le 2ème nombre sur la deuxième ligne
+        LCD.print("Nombre2: ");
+        LCD.print(valeure2);
+        Serial.println("Entrer l'operateur");
+        
+        // Attendre l'entrée de l'opérateur
+        while (Serial.available() == 0) {  // Attendre jusqu'à ce qu'une nouvelle saisie soit disponible
+          delay(100);  // Attendre un peu
+        }
+        
+        // Récupère la saisie de l'opérateur
+        Monitor3 = Serial.readStringUntil('\n');  
+        Serial.println(Monitor3);
+        
+        // Vérification si l'opérateur est valide
+        /**
+        note : .charAt(indice)
+        permet de changer en le caractère a l'indice 0 en char
+        **/
+        if (VerificationOperateur(Monitor3.charAt(0))) {  // Passer le premier caractère de la chaîne
+          operateur = Monitor3.charAt(0);  // Récupère l'opérateur
+          Serial.println("Operateur valide.");
+          LCD.clear();
+          LCD.setCursor(0, 0);
+          LCD.print("Operateur: ");
+          LCD.print(operateur);
+          
+          //Appel Fonction des operation
+          resultat = Operation(valeure1, valeure2, operateur);
+          delay(2000);
+          LCD.clear();
+          LCD.setCursor(0, 0);
+          LCD.print("Resultat = ");
+          LCD.print(resultat);
+          
+          Serial.println("Entrer le nombre1");
+        } else {
+          Serial.println("Operateur invalide.");
+        }
+      } else {
+        Serial.println("nombre2 pas valide.");
+      }
+    } else {
+      Serial.println("nombre1 pas valide.");
+    }
+  }
+}
+
+
+
+
+
+
+
+// Fonction de vérification si la chaîne Monitor est un nombre valide
+bool VerificationNombre(String Nombre) {
+  int i = 0;
+  int j = 0;
+
+  // Parcours chaque caractère de la chaîne Monitor
+  for (i = 0; i < Nombre.length(); i++) {
+    bool isValid = false;  // pour savoir si le caractère est valide
+    
+    // Parcours les caractères de la liste tab_Nombre
+    for (j = 0; j < 11; j++) {
+      if (Nombre[i] == tab_Nombre[j]) {
+        isValid = true;  // Si le caractère est valide
+      }
+    }
+    // Si un caractère n'est pas valide, retourne false
+    if (!isValid) {
+      return false;
+    }
+  }
+
+  // Si tous les caractères sont valides
+  return true;
+}
+
+
+
+
+// Fonction pour vérifier si un opérateur est valide
+bool VerificationOperateur(char operateur) {
+  for (int i = 0; i < 4; i++) {
+    if (operateur == tab_operateurs[i]) {
+      return true;  // Si l'opérateur est valide
+    }
+  }
+  return false;  // Si l'opérateur n'est pas valide
+}
+
+
+float Operation(float nombre1, float nombre2, char operation){
+  
+  if(operation == tab_operateurs[0]){
+  	resultat = nombre1 + nombre2;
+    return resultat;
+  }if(operation == tab_operateurs[1]){
+  	resultat = nombre1 - nombre2;
+    return resultat;
+  }if(operation == tab_operateurs[2]){
+  	resultat = nombre1 * nombre2;
+    return resultat;
+  }if(operation == tab_operateurs[3]){
+    if(nombre2 == 0){
+    	Serial.println("Operation non valide");
+      	LCD.clear();
+        LCD.setCursor(0, 0);
+        LCD.print("x/0 impossible");
+     	return 0;
+    }
+  	resultat = nombre1 / nombre2;
+    return resultat;
+  }else{
+  	Serial.println("Erreur l'ors de operation fontion operation");
+  	return 0;
+  }
+
+}

@@ -1,0 +1,105 @@
+
+#include <LiquidCrystal_I2C.h>
+
+// Initialisation des variables globales
+int moisture = 0;       // Valeur de l'humidité
+int temperature = 0; // Valeur brute du capteur de température
+int temp = 0;           // Température en C
+float fahrenheit = 0;   // Température en Fahrenheit
+float moisture_100 = 0; // Humidité en pourcentage
+
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C LCD(0x27, 16, 2);
+
+void setup() {
+    LCD.begin(16, 2);
+    LCD.init();         // Initialisation de l'afficheur
+    LCD.backlight();    // Allumer le rétroéclairage
+
+    // Initialisation des broches des capteurs
+    pinMode(A2, INPUT); // Broche de la température
+    pinMode(A3, INPUT); // Broche de l'humidité
+  
+    Serial.begin(9600);
+}
+
+void loop() {
+   
+    // Appel de la fonction Temperature() 
+    fahrenheit = Temperature();
+  	// Appel de la fonction Humiditee() 
+  	moisture_100 = Humiditee();
+ 	
+  
+  	
+  	//Formule de l'indice de confort thermique
+  	float HI = 0.5 * (fahrenheit + 61.0 + ((fahrenheit-68.0)*1.2) + (moisture_100*0.094));
+	float HIcomp = calculateHeatIndex(fahrenheit,moisture_100);
+  
+  	LCD.setCursor(0, 0);  // Ligne 1, colonne 0
+    LCD.print("HIs : ");
+    LCD.print(HI);
+    LCD.print("    ");
+  	LCD.setCursor(0, 1);  // Ligne 1, colonne 0
+    LCD.print("HIc : ");
+    LCD.print(HIcomp);
+    LCD.print("    ");
+}	
+
+// Fonction pour lire et afficher la température
+int Temperature() {
+    // Lecture du capteur de température
+    temperature = analogRead(A2);
+  
+    // Conversion de la lecture analogique en température en C
+    temp = round(temperature * (5.0 / 1024.0) * 100 - 50);
+  	
+  	// Conversion de la lecture analogique en température en fahrenheit
+  	int fahrenheit = round((temp*9/5)+ 32);
+  
+ 	/** TEST AFFICHAGE MT
+    Serial.print("Température: ");
+    Serial.print(temp);
+    Serial.println(" C");
+   	
+    // Affichage de la température sur l'écran LCD
+    LCD.setCursor(0, 1);  // Ligne 1, colonne 0
+    LCD.print("Temp: ");
+    LCD.print(fahrenheit);
+    LCD.print(" C   ");    // Efface les anciens caractères résiduels
+	**/
+  	return fahrenheit;
+  	
+}
+
+// Fonction pour lire et afficher l'Humiditee
+float Humiditee() {
+	 // Lecture du capteur d'humidité
+    moisture = analogRead(A3);
+  	//convertion de la temperature en %
+  	float moisture_100 = (float)moisture/876;
+  	//Serial.println(moisture_100);
+  	
+  /**
+    // Affichage de l'humidité sur l'écran LCD
+    LCD.setCursor(0, 0);  // Ligne 0, colonne 0
+    LCD.print("Humiditee: ");
+    LCD.print(moisture_100);
+    LCD.print("    ");    // Efface les anciens caractères résiduels
+  	**/
+	return moisture_100;
+  	
+}
+
+
+float calculateHeatIndex(float temperature, float humidite) {
+  return -42.379 +
+         2.04901523 * temperature +
+         10.14333127 * humidite -
+         0.22475541 * temperature * humidite -
+         0.00683783 * temperature * temperature -
+         0.05481717 * humidite * humidite +
+         0.00122874 * temperature * temperature * humidite +
+         0.00085282 * temperature * humidite * humidite -
+         0.00000199 * temperature * temperature * humidite * humidite;
+}
