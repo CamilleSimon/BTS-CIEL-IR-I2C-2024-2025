@@ -1,0 +1,47 @@
+// C++ code
+//
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x20, 16, 2);
+const int PIN_TEMPERATURE = A0;
+const int PIN_HUMIDITE = A1;
+const int PIN_PRESSURE = A2;
+const int PIN_LIGHT = A3;
+
+void setup()
+{ 
+	Serial.begin(9600); 
+	lcd.begin(16,2);
+	lcd.init();
+	lcd.backlight();
+}
+
+void temperature()
+{
+  temperarture = analogRead(PIN_TEMPERATURE);
+  Serial.print(temperature);
+}
+
+void humidite()
+{
+  humidite = analogRead(PIN_HUMIDITE);
+  Serial.print(humidite);
+}
+
+void pressure()
+{
+  pressure = analogRead(PIN_PRESSURE);
+  Serial.print(pressure);
+}
+
+void light()
+{
+  light = analogRead(PIN_LIGHT);
+  Serial.print(light);
+}
+
+
+void loop()
+{
+	
+  	
+}
