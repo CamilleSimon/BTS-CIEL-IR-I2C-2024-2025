@@ -39,6 +39,10 @@ void light()
   Serial.print(light);
 }
 
+void IndiceConfortThermique()
+{
+  indiceConfortThermique = 0.5 *{temperature + 61 +[(temperature-68)*1.2] +(humidite * 0.094}
+}
 
 void loop()
 {
