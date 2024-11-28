@@ -8,7 +8,7 @@ String nbr1 = "";
 String nbr2 = "";
 String conti = "";
 String signe = "";
-String ch = "";
+String ch = "";  
 bool wait = false;
   
 float valid(String s){
@@ -37,40 +37,64 @@ float valid(String s){
 
 
 void Recepnombre1(){
-   while (Serial.available() != 0) {
-     char receivedChar = Serial.read();
-     for(int i = 0; i < nbr1.length(); i++){
-     	nbr1 += receivedChar;
-   }
-  }
+    while(!wait){
+      String choix = "";
+        while (Serial.available() != 0) {
+            char receivedChar = Serial.read();
+          	choix = receivedChar;
+            for(int i = 0; i < choix.length(); i++){
+                nbr1 += receivedChar;
+            }
+          wait = true;
+        }
+    }
+
 }
 
 
 void Recepnombre2(){
-   while (Serial.available() != 0) {
-     char receivedChar = Serial.read();
-     for(int i = 0; i < nbr2.length(); i++){
-     	nbr2 += receivedChar;  
-     }
-  }
+    while(!wait){
+      String choix = "";
+        while (Serial.available() != 0) {
+            char receivedChar = Serial.read();
+          	choix = receivedChar;
+            for(int i = 0; i < choix.length(); i++){
+                nbr2 += receivedChar;
+            }
+          wait = true;
+        }
+    }
+
 }
 
 void RecepSigne(){
-   while (Serial.available() != 0) {
-     char receivedChar = Serial.read();
-     for(int i = 0; i < signe.length(); i++){
-     	signe += receivedChar;  
-     }
-  }
+    while(!wait){
+      String choix = "";
+        while (Serial.available() != 0) {
+            char receivedChar = Serial.read();
+          	choix = receivedChar;
+            for(int i = 0; i < choix.length(); i++){
+                signe += receivedChar;
+            }
+          wait = true;
+        }
+    }
+
 }
 
 void Recepconti(){
-   while (Serial.available() != 0) {
-     char receivedChar = Serial.read();
-     for(int i = 0; i < conti.length(); i++){
-     	conti += receivedChar;  
-     }
-  }
+    while(!wait){
+      String choix = "";
+        while (Serial.available() != 0) {
+            char receivedChar = Serial.read();
+          	choix = receivedChar;
+            for(int i = 0; i < choix.length(); i++){
+                conti += receivedChar;
+            }
+          wait = true;
+        }
+    }
+
 }
 
 
@@ -109,15 +133,35 @@ void setup()
   lcd.begin(16,2);
   lcd.init();
   lcd.backlight();
- do{
+
+}
+
+
+
+void loop()
+{
+
+  String nbr1 = "";
+  String nbr2 = "";
+  String conti = "";
+  String signe = "";
+  String ch = "";  
+  bool wait = false;
+
  lcd.setCursor(0, 0);
  lcd.print("Entrez le ");
  lcd.setCursor(0, 1);
  lcd.print("premier nombre :");
  Recepnombre1();
- 
+ wait = false;
 
-  
+
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Nbr choisit : ");
+ lcd.setCursor(0, 1);
+ lcd.print(nbr1);
+ delay(1000);
   
  lcd.clear();
  lcd.setCursor(0, 0);
@@ -126,7 +170,7 @@ void setup()
  lcd.print("deuxieme nombre :");
   
  Recepnombre2();
-
+ wait = false;
   
  lcd.clear();
  lcd.setCursor(0, 0);
@@ -136,7 +180,7 @@ void setup()
   
 
  RecepSigne();
-
+ wait = false;
 
  lcd.clear();
  lcd.setCursor(0, 0);
@@ -148,6 +192,7 @@ void setup()
  float fnbr1 = nbr1.toFloat();
  float fnbr2 = nbr2.toFloat();
  float resultat = calculer(fnbr1, fnbr2, signe);	
+ wait = false;
 
  lcd.clear();
  lcd.setCursor(0, 0);
@@ -162,16 +207,11 @@ void setup()
  lcd.setCursor(0, 1);
  lcd.print("y/n");
  Recepconti();
- 
-  }while(conti != "n");
+ wait = false;
+
+ if(conti == "n"){
   lcd.clear();
   lcd.print("EXIT!");
   lcd.noBacklight();
-  lcd.noDisplay();
-}
-
-
-
-void loop()
-{
+  lcd.noDisplay();}
 }
