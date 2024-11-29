@@ -1,0 +1,217 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+
+// Création d'un objet LCD avec l'adresse I2C de l'écran
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+String nbr1 = "";
+String nbr2 = "";
+String conti = "";
+String signe = "";
+String ch = "";  
+bool wait = false;
+  
+float valid(String s){
+  bool caracInvalid = false;
+  String entreUtilisateur = " ";
+  do{
+	lcd.print(s);
+  	if(Serial.available()){
+      entreUtilisateur = Serial.readStringUntil('\n');
+      int i = 0;
+      while(i<entreUtilisateur.length() && caracInvalid == false){
+        int c = entreUtilisateur[i];
+        if((c < '0' || c >'9') && c != '.'){
+          caracInvalid=true; 
+            }
+        i++;
+        }
+    }
+  }while(caracInvalid == true);
+   if(entreUtilisateur != " "){
+     return entreUtilisateur.toFloat();      
+  }else{
+     lcd.print("Nombre invalide");  
+   }
+}
+
+
+void Recepnombre1(){
+    while(!wait){
+      String choix = "";
+        while (Serial.available() != 0) {
+            char receivedChar = Serial.read();
+          	choix = receivedChar;
+            for(int i = 0; i < choix.length(); i++){
+                nbr1 += receivedChar;
+            }
+          wait = true;
+        }
+    }
+
+}
+
+
+void Recepnombre2(){
+    while(!wait){
+      String choix = "";
+        while (Serial.available() != 0) {
+            char receivedChar = Serial.read();
+          	choix = receivedChar;
+            for(int i = 0; i < choix.length(); i++){
+                nbr2 += receivedChar;
+            }
+          wait = true;
+        }
+    }
+
+}
+
+void RecepSigne(){
+    while(!wait){
+      String choix = "";
+        while (Serial.available() != 0) {
+            char receivedChar = Serial.read();
+          	choix = receivedChar;
+            for(int i = 0; i < choix.length(); i++){
+                signe += receivedChar;
+            }
+          wait = true;
+        }
+    }
+
+}
+
+void Recepconti(){
+    while(!wait){
+      String choix = "";
+        while (Serial.available() != 0) {
+            char receivedChar = Serial.read();
+          	choix = receivedChar;
+            for(int i = 0; i < choix.length(); i++){
+                conti += receivedChar;
+            }
+          wait = true;
+        }
+    }
+
+}
+
+
+float calculer(float nombr1, float nombr2, String op){
+  float resultat = 0;
+  if(op == "+"){
+    resultat = nombr1 + nombr2;
+  }else if(op == "-"){
+    resultat = nombr1 - nombr2;
+  
+  
+  }else if(op == "*"){
+    resultat = nombr1 * nombr2;
+  
+  
+   }else if(op == "/"){
+    if (nombr2 != 0){
+      resultat = nombr1 / nombr2;}
+    else{
+      lcd.clear();
+  	  lcd.setCursor(0, 0);
+  	  lcd.print("ERREUR!");
+  	  lcd.setCursor(0, 1);
+  	  lcd.print("DIVISION PAR 0");
+  	  delay(1500);
+      resultat = nombr1 / nombr2;
+    }
+  }
+return resultat;
+}
+
+
+void setup()
+{
+  Serial.begin(9600);
+  lcd.begin(16,2);
+  lcd.init();
+  lcd.backlight();
+
+}
+
+
+
+void loop()
+{
+
+  String nbr1 = "";
+  String nbr2 = "";
+  String conti = "";
+  String signe = "";
+  String ch = "";  
+  bool wait = false;
+
+ lcd.setCursor(0, 0);
+ lcd.print("Entrez le ");
+ lcd.setCursor(0, 1);
+ lcd.print("premier nombre :");
+ Recepnombre1();
+ wait = false;
+
+
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Nbr choisit : ");
+ lcd.setCursor(0, 1);
+ lcd.print(nbr1);
+ delay(1000);
+  
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Entrez le ");
+ lcd.setCursor(0, 1);
+ lcd.print("deuxieme nombre :");
+  
+ Recepnombre2();
+ wait = false;
+  
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Entrez le ");
+ lcd.setCursor(0, 1);
+ lcd.print("signe :");  
+  
+
+ RecepSigne();
+ wait = false;
+
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Signe choisit : ");
+ lcd.setCursor(0, 1);
+ lcd.print(signe);
+ delay(1000);
+  
+ float fnbr1 = nbr1.toFloat();
+ float fnbr2 = nbr2.toFloat();
+ float resultat = calculer(fnbr1, fnbr2, signe);	
+ wait = false;
+
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Resultat : ");
+ lcd.setCursor(0, 1);
+ lcd.print(resultat);
+ delay(1500);
+  
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Continuer?");
+ lcd.setCursor(0, 1);
+ lcd.print("y/n");
+ Recepconti();
+ wait = false;
+
+ if(conti == "n"){
+  lcd.clear();
+  lcd.print("EXIT!");
+  lcd.noBacklight();
+  lcd.noDisplay();}
+}
