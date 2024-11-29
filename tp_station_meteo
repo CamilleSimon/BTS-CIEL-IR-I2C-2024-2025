@@ -1,0 +1,56 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+//int moisissure =1;
+int temperature = 0;
+//int humidite = 0; // [0-100]
+
+void setup() {
+  // démarre le LCD
+  lcd.init();
+  
+  lcd.backlight();   // allume l'écran
+  lcd.begin(16, 2); 
+  Serial.begin(9600);
+  lcd.setCursor(0, 0);  // initialise la position du curseur 
+  lcd.print("Hello, World!");
+
+}
+void getcapteur()
+{
+  char readChar = 0;
+  int buff = Serial.available();
+
+  while(buff > 0) // tant qu'il reste des caractères dans le buffer
+  {
+      readChar = Serial.read(); // lecture du caractère
+      temperature = temperature+readChar;// ajouter le contenu de readChar dans mot
+      buff = Serial.available();
+  }
+}
+  
+
+void loop() 
+{
+  
+
+  lcd.clear(); 
+  lcd.setCursor(0, 0);
+  lcd.print("Temp: ");
+  lcd.print(getcapteur(temperature));
+  lcd.print("C");
+
+  /*lcd.setCursor(0, 1);
+  lcd.print("Humidite: ");
+  lcd.print(humidite);
+  lcd.print("%");
+  delay(2000);
+  
+  lcd.clear();
+  lcd.print("moisissure: ");
+  lcd.print(moisissure);*/
+
+  delay(2000);  // réactualise lécran toute les 2 secondes
+}
