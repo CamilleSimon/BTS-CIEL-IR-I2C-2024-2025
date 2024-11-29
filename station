@@ -1,0 +1,31 @@
+// C++ code
+//
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x20, 16, 2);
+
+const int PIN_TEMPERATURE = A0;
+const int PIN_HUMIDITY = A1;
+const int PIN_PRESSURE = A2;
+const int PIN_LIGHT = A3;
+
+void setup()
+{
+lcd.begin(16,2);
+lcd.init();
+lcd.backlight();
+  
+DisplayStartupMessage();
+}
+
+void loop(){
+  
+}
+
+void DisplayStartupMessage(){
+  lcd.clear();
+lcd.setCursor(0, 0 );
+lcd.print("Station Meteo");
+lcd.setCursor(0, 1);
+lcd.print("initialisation...");
+delay(2000);
+}
